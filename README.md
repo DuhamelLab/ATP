@@ -15,6 +15,7 @@ This is because the firefly powder degrades over the course of the experiment, s
 
 ![482161df-b9bb-49ce-9f41-7ed0f8b7a30a](https://github.com/user-attachments/assets/1b39257e-2810-44b9-b93b-4b4996a6c76c)
 ![ab3db168-69da-44db-8aea-2292e77bf454](https://github.com/user-attachments/assets/e6af0e05-c0e2-4306-8133-c03bfdd18647)
+
 Next it takes the linear equations for these, calculates the predicted Tris luminescence for the time of the sample measurement (based on the slope using the xbounds) and subtracts that from the integrated luminescence. It then sets negative values to 0. 
 
 The next function (extract_concentration) parses samples and blanks from the standards and then puts the numeric value of the standard concentration into a new column. 
@@ -22,6 +23,7 @@ The next function (extract_concentration) parses samples and blanks from the sta
 The final function (calculate_sample_concentration) generates a standard curve from the standards (while averaging triplicate measurements) and then uses that linear function to calculate the sample concentration to calculate the sample concentration in ng/mL
 
 Example standard curve: 
+
 ![b0c76198-7a78-4d1f-9678-d273f135e208](https://github.com/user-attachments/assets/70dff8dc-c51d-4bae-acfa-5cae3e23dc63)
 
 
