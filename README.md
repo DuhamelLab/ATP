@@ -21,6 +21,10 @@ The next function (extract_concentration) parses samples and blanks from the sta
 
 The final function (calculate_sample_concentration) generates a standard curve from the standards (while averaging triplicate measurements) and then uses that linear function to calculate the sample concentration to calculate the sample concentration in ng/mL
 
+Example standard curve: 
+![b0c76198-7a78-4d1f-9678-d273f135e208](https://github.com/user-attachments/assets/70dff8dc-c51d-4bae-acfa-5cae3e23dc63)
+
+
 Please provide in the function the sample extract volume (e.g., 5 mL) and the amount of sample added to the extract. If you do not provide a sample volume (e.g., weight of sample, volume of sample, number of cells, etc), it will just provide the total ATP in the extract. 
 
 This code will output the csv file with the calculated ATP values, the standard curve figure, and the Tris vs Time figure. 
