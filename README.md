@@ -1,3 +1,16 @@
+Packages needed:
+numpy 
+matplotlib
+pandas
+scipy 
+```
+pip install numpy
+pip install matplotlib
+pip install pandas
+pip install scipy
+```
+Or use a conda environment, if you prefer. 
+
 The following contains a python script to analyze data output from the Berthold tube luminometer instrument in the lab. 
 As of 10/28/24, we have not been able to program the software to output the time of measurement, so the time each tube goes into the instrument **must** be recorded. 
 
