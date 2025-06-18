@@ -22,6 +22,8 @@ Please also ensure that your sample names have a letter or are a string so that 
 The other data to input is the time of measurement csv file, which has the sample names on the top row and the recorded time of measurment in the bottom row: 
 <img width="651" alt="Screenshot 2024-09-26 at 8 50 16 AM" src="https://github.com/user-attachments/assets/f71e6c28-450e-4df4-a03b-fed245855158">
 
+Update June 18 2025: Included a "atp_time_logger" app that opens a GUI allowing you to just click to record time of measurement given a python list of samples and then save to CSV
+
 First, the code reads in the data and integrates the RLU values using the trapezoid approximation. Next, it combines those values with the time and converts the time into a python-readable format. 
 The next function takes 4 arguments: the input dataframe, a True/False indicator whether to seperate out the Tris values, and the x bounds. The first xbound is the upper bound of the first line and second is the lower bound of the second line. 
 This is because the firefly powder degrades over the course of the experiment, so it is important to track that degradation. See the difference in the slopes of RLU vs time of the Tris measurements below when you don't seperate them out: 
