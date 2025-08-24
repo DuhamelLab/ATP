@@ -44,7 +44,9 @@ def _to_time(obj: Union[str, time, pd.Timestamp]) -> time:
         return pd.to_datetime(obj).to_pydatetime().time()
     raise TypeError(f"Cannot convert type {type(obj)} to time")
 
-
+def _ensure_parent_dir(path: str) -> None:
+    d = os.path.dirname(path) or "."
+    os.makedirs(d, exist_ok=True)
 
 def _seconds_since(start: time, t: time) -> float:
     return (t.hour - start.hour) * 3600 + (t.minute - start.minute) * 60 + (t.second - start.second)
@@ -387,6 +389,7 @@ class ATPAnalyzer:
         plt.title("ATP Standard Curve (fit before Tris correction)")
         plt.legend()
         if save_path:
+            _ensure_parent_dir(save_path)
             plt.savefig(save_path, dpi=300, bbox_inches="tight")
         plt.close()
         return self
@@ -414,6 +417,7 @@ class ATPAnalyzer:
         plt.title(f"{y} vs {x}")
         plt.legend()
         if save_path:
+            _ensure_parent_dir(save_path)
             plt.savefig(save_path, dpi=300, bbox_inches="tight")
         plt.close()
         return self
@@ -464,6 +468,7 @@ class ATPAnalyzer:
         plt.legend()
 
         if save_path:
+            _ensure_parent_dir(save_path)
             plt.savefig(save_path, dpi=300, bbox_inches="tight")
         plt.close()
         return self
