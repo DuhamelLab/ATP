@@ -2,15 +2,42 @@ ATP Analysis (Berthold tube luminometer)
 
 
 A small, reusable toolkit for quantifying ATP from Berthold tube luminometer runs. It:
+
 	•	Fits the ATP standard curve first (on raw standards),
+ 
 	•	Models Tris baseline drift over the run (single or two-segment),
+ 
 	•	Treats Tris as a time-varying intercept (so we don’t double-penalize samples),
+ 
 	•	Corrects samples by subtracting the predicted Tris at their timestamps,
+ 
 	•	Converts corrected signal to concentration using the standard-curve slope,
+ 
 	•	Optionally normalizes to original sample mass/volume,
+ 
 	•	Auto-creates output folders and exports plots + CSVs,
+ 
 	•	Provides an example notebook for reproducible runs.
 
+What the code does (pipeline)
+
+	1.	Integrate each sample’s RLU trace over Time (trapezoid).
+ 
+	2.	Fit standards first (raw integrals → slope & intercept stored).
+ 
+	3.	Fit Tris drift (single or two-segment line) vs seconds since start.
+ 
+	4.	Correct samples by subtracting predicted Tris at each timestamp; clip negatives to 0.
+ 
+	5.	Quantify with slope only: Concentration_ng_per_mL = Corrected / slope.
+ 
+	6.	(Optional) Back-calculate to Original_Sample_Concentration_ng_per_<unit> using sample volumes/weights.
+ 
+	7.	(Optional) Blanks threshold: mark samples above mean_blank + k·SD_blank.
+ 
+	8.	(Optional) Merge metadata and plot against any column.
+ 
+	9.	Save plots and CSVs; directories are created automatically.
 
 Packages needed:
 numpy 
@@ -25,8 +52,7 @@ pip install scipy
 ```
 Or use a conda environment, if you prefer. 
 
-The following contains a python script to analyze data output from the Berthold tube luminometer instrument in the lab. 
-As of 10/28/24, we have not been able to program the software to output the time of measurement, so the time each tube goes into the instrument **must** be recorded. 
+As of 10/28/24, we have not been able to program the instrument software to output the time of measurement, so the time each tube goes into the instrument **must** be recorded. 
 
 After exporting the data, the easiest thing to do is copy the data into a fresh csv file and change the top row to the sample names. The standards can be just the numbers and name the Tris measurments "Tris": 
 <img width="784" alt="Screenshot 2024-09-26 at 8 51 08 AM" src="https://github.com/user-attachments/assets/1963d83f-f545-4f4e-9174-6f032fda9309">
@@ -59,3 +85,55 @@ Example standard curve:
 Please provide in the function the sample extract volume (e.g., 5 mL) and the amount of sample added to the extract. If you do not provide a sample volume (e.g., weight of sample, volume of sample, number of cells, etc), it will just provide the total ATP in the extract. 
 
 This code will output the csv file with the calculated ATP values, the standard curve figure, and the Tris vs Time figure. 
+
+Quickstart: 
+
+```
+from atp_analysis import ATPAnalyzer
+import pandas as pd
+
+base = "example_run/"  # change to your folder with CSVs
+
+analyzer = (
+    ATPAnalyzer(data_csv=base + "measurements.csv", time_csv=base + "timestamps.csv")
+      .integrate()
+      .fit_standard_curve()                            # Fit standards FIRST (raw integrals)
+      .fit_tris_drift(separate=True, split_seconds=1000)  # Or separate=False for a single line
+      .apply_corrections_and_quantify(
+          extract_vol=4.0,                              # mL of Tris (or diluent) used
+          sample_vol=pd.read_csv(base + "sample_volumes.csv"),  # None | float | DataFrame
+          sample_unit="g"                               # labels output as ng per g (or "mL")
+      )
+      .compute_blank_threshold(
+          blank_names=['Blank','Blank.1','Blank 2'],    # put your actual blank names here
+          k=3.0                                         # threshold = mean_blank + k*SD_blank
+      )
+      .merge_metadata(
+          meta=base + "metadata.tsv",                   # or .csv
+          right_key="#SampleID"                         # column in metadata matching Base_Sample
+      )
+)
+
+# Plots (folders auto-created)
+analyzer.plot_standard_curve(save_path=base + "outputs/ATP_Standard_Curve.png", through_origin=True)
+analyzer.plot_tris_drift(save_path=base + "outputs/Tris_drift.png")  # shows 1 or 2 lines as fitted
+analyzer.plot_vs_metadata(x="Age", y="avg_concentration", save_path=base + "outputs/ATP_vs_age.png")
+
+# CSVs (folder auto-created)
+analyzer.save_outputs(prefix=base + "outputs/atp_")
+```
+Outputs
+
+	•	*_integrals.csv — integral and timestamp per column.
+ 
+	•	*_samples_wide.csv — aliquot-level concentrations (extract and/or original-sample units).
+ 
+	•	*_grouped.csv — mean ± SD per Base_Sample (+ n).
+ 
+	•	*_merged_meta.csv — grouped joined with metadata (if provided).
+ 
+	•	ATP_Standard_Curve.png — standards mean±SD + fit (toggle through-origin for visualization).
+ 
+	•	Tris_drift.png — Tris points + fitted drift line(s).
+ 
+	•	ATP_vs_<metadata>.png — concentration vs chosen metadata field.
