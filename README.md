@@ -1,25 +1,7 @@
 ATP Analysis (Berthold tube luminometer)
 
 
-A small, reusable toolkit for quantifying ATP from Berthold tube luminometer runs. It:
-
-	•	Fits the ATP standard curve first (on raw standards),
- 
-	•	Models Tris baseline drift over the run (single or two-segment),
- 
-	•	Treats Tris as a time-varying intercept (so we don’t double-penalize samples),
- 
-	•	Corrects samples by subtracting the predicted Tris at their timestamps,
- 
-	•	Converts corrected signal to concentration using the standard-curve slope,
- 
-	•	Optionally normalizes to original sample mass/volume,
- 
-	•	Auto-creates output folders and exports plots + CSVs,
- 
-	•	Provides an example notebook for reproducible runs.
-
-What the code does (pipeline)
+A small, reusable toolkit for quantifying ATP from Berthold tube luminometer runs. It: 
 
 	1.	Integrate each sample’s RLU trace over Time (trapezoid).
  
